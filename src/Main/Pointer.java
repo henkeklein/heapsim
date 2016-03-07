@@ -11,7 +11,7 @@ package Main;
 public class Pointer {
     private int address;
     private RawMemory memory;
-
+    int i =0;
     /**
      * Initializes an instance of Pointer.
      */
@@ -57,6 +57,8 @@ public class Pointer {
      * @param data The data to write.
      */
     public void write(int[] data) {
+
+        System.out.print(i++ +"\n");
         memory.write(address, data);
     }
 
