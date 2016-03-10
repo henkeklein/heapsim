@@ -1,8 +1,5 @@
 package Main;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-
 /**
  * This memory model allocates memory cells based on the first-fit method.
  *
@@ -12,7 +9,7 @@ import java.util.LinkedList;
 public class FirstFit extends Memory {
     private int pointers[] ;
     private Pointer point;
-    int count=0;
+    private int count=0 ;
     /**
      * Initializes an instance of a first fit-based memory.
      *
@@ -36,17 +33,18 @@ public class FirstFit extends Memory {
     @Override
     public Pointer alloc(int size) {
 
-        for(int i=0; i <= pointers.length; i++){
-            if(size>point.pointsAt()){
+            if(size>pointers.length){
+                System.out.println("Out of memory");
+            }else {
+                for (int i = 0; i < pointers.length; i++) {
+                    pointers[i] = count;
+                    if (pointers[count] < size) {
+                        count++;
+                    }
 
-                point.pointAt(count);
-            }
-            else if(size==point.pointsAt()){
+                }
                 point.write(pointers);
             }
-            count++;
-        }
-
         return point;
     }
 
