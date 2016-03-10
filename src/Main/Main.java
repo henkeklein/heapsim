@@ -9,7 +9,15 @@ public class Main {
         RawMemory rawMemory = new RawMemory(256);
         Pointer point = new Pointer(rawMemory);
         FirstFit firstFit = new FirstFit(256, point);
-        firstFit.alloc(20);
+        firstFit.alloc(250);
+        firstFit.alloc(3);
+        firstFit.alloc(2);
+        firstFit.release(point);
+
+
+
+
+
 
 
 
