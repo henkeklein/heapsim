@@ -10,7 +10,6 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
  */
 public class FirstFit extends Memory {
     private Status[] status;
-    private int writePos = 0;
     private int readPos;
     private Pointer p;
     private int count;
@@ -39,17 +38,14 @@ public class FirstFit extends Memory {
      */
     @Override
     public Pointer alloc(int size) {
-
-        if(status.length-size >0){
-            for(int i=0; i<=size; i++){
-                count=p.pointsAt();
-            if ((status[count] == Status.Empty)) {
+        count+=size;
+            for(int i=0; i<=count; i++){
+            if ((status[i] == Status.Empty)) {
                 p.pointAt(i);
                 status[p.pointsAt()] = Status.New;
-
-            }
             }
                 }
+
     return p;
 }
 
@@ -85,12 +81,15 @@ public class FirstFit extends Memory {
      */
     @Override
     public void printLayout() {
-       for(int i =0; i < p.read(status.length).length; i++){
+
+       for(int i =0; i < cells.length; i++){
+
+           p.read(i);
         if(status[i]==Status.New){
-    System.out.println("Used Memory:" + i);
+
            }
            if(status[i]==Status.Empty){
-               System.out.println("Free Memory:" + i);
+
 
            }
 

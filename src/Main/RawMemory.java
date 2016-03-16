@@ -9,6 +9,7 @@ package Main;
  */
 class RawMemory {
     protected int[] cells;
+    int count=0;
 
     /**
      * Initializes a memory instance.
@@ -51,18 +52,20 @@ class RawMemory {
                 data[i] = cells[address + i];
             }
         } catch (ArrayIndexOutOfBoundsException e) {}
-
+toString();
         return data;
     }
 
     @Override
     public String toString() {
+
         StringBuffer sb = new StringBuffer();
 
         for (int data : cells) {
             sb.append(data + "\n");
+           count++;
         }
-
+        System.out.println(count);
         return sb.toString();
     }
 }

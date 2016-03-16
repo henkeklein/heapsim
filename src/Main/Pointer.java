@@ -68,6 +68,7 @@ public class Pointer {
      * @return The data.
      */
     public int[] read(int length) {
+
         return memory.read(address, length);
     }
 }
