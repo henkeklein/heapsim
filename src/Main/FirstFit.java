@@ -9,24 +9,22 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
  * @since 1.0
  */
 public class FirstFit extends Memory {
-    private int memory[] ;
-    private Pointer point;
     private Status[] status;
-    private int writePos=0;
+    private int writePos = 0;
     private int readPos;
-    private int findPos;
-    private int pointerCount=0;
+    private Pointer p;
+    private int count;
+
     /**
      * Initializes an instance of a first fit-based memory.
      *
      * @param size The number of cells.
-     * @param point
      */
-    public FirstFit(int size, Pointer point) {
+    public FirstFit(int size) {
         super(size);
-        this.point=point;
-        memory = new int[size];
+        p = new Pointer(this);
         status = new Status[size];
+
 
         for (int i = 0; i < status.length; i++) {
             status[i] = Status.Empty;
@@ -41,24 +39,19 @@ public class FirstFit extends Memory {
      */
     @Override
     public Pointer alloc(int size) {
-        int count=0;
 
-        if(size<=memory.length) {
-            while (status[writePos] == Status.Empty && count < size) {
-                memory[writePos] = size;
-                status[writePos] = Status.New;
-               writePos++;
-                count++;
+        if(status.length-size >0){
+            for(int i=0; i<=size; i++){
+                count=p.pointsAt();
+            if ((status[count] == Status.Empty)) {
+                p.pointAt(i);
+                status[p.pointsAt()] = Status.New;
 
-                if(writePos==memory.length){
-                    writePos-=1;
-                }
             }
-        }
-        point.pointAt(pointerCount++);
-        point.write(memory);
-        return point;
-    }
+            }
+                }
+    return p;
+}
 
     /**
      * Releases a number of data cells
@@ -67,16 +60,18 @@ public class FirstFit extends Memory {
      */
     @Override
     public void release(Pointer p) {
-        while (status[readPos] == Status.New) {
-    int lenght = p.pointsAt();
+        int lenght = p.pointsAt();
         int arr[];
 
-               arr= p.read(writePos);
+        while (status[readPos] == Status.New) {
+            status[readPos] = Status.Empty;
+            readPos++;
+            arr = p.read(readPos);
 
-for(int i:arr){
-System.out.println(i+" ARR");
-
-}
+            for (int i : arr) {
+                System.out.println(i + " ARR");
+            }
+        }
 
     }
 
@@ -90,8 +85,15 @@ System.out.println(i+" ARR");
      */
     @Override
     public void printLayout() {
-        // TODO Implement this!
+       for(int i =0; i < p.read(status.length).length; i++){
+        if(status[i]==Status.New){
+    System.out.println("Used Memory:" + i);
+           }
+           if(status[i]==Status.Empty){
+               System.out.println("Free Memory:" + i);
+
+           }
+
+       }
     }
-
-
 }
