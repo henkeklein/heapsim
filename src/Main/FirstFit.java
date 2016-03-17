@@ -1,6 +1,8 @@
 package Main;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * This memory model allocates memory cells based on the first-fit method.
@@ -10,10 +12,11 @@ import java.util.HashMap;
  */
 public class FirstFit extends Memory {
     private Status[] status;
-    private HashMap<Pointer,Integer> hash;
+    private Map<Pointer,Integer> hash;
+    private LinkedList <Pointer> pointerList;
     private Pointer p;
-    private int count = 1;
-
+    private int writePos;
+    private int readPos;
     /**
      * Initializes an instance of a first fit-based memory.
      *
@@ -21,7 +24,7 @@ public class FirstFit extends Memory {
      */
     public FirstFit(int size) {
         super(size);
-
+        pointerList = new LinkedList<Pointer>();
         hash = new HashMap<>();
         status = new Status[size];
         for (int i = 0; i < status.length; i++) {
@@ -37,17 +40,16 @@ public class FirstFit extends Memory {
      */
     @Override
     public Pointer alloc(int size) {
-        count += size;
-        if (size < count) {
+        int i=0;
             p = new Pointer(this);
-            for (int i = 0; i <= count; i++) {
-                if ((status[i] == Status.Empty)) {
-                    p.pointAt(i);
-                    status[p.pointsAt()] = Status.USED;
+                while ((status[writePos] == Status.Empty) && i<=size) {
+                    p.pointAt(writePos);
+                    pointerList.add(p);
                     hash.put(p,size );
-                }
+                    status[writePos] = Status.USED;
+                    writePos++;
+                    i++;
             }
-        }
         return p;
     }
 
@@ -58,14 +60,13 @@ public class FirstFit extends Memory {
      */
     @Override
     public void release(Pointer p) {
-        for (int i = 0; i <= hash.get(p); i++) {
-            if (status[i] == Status.USED) {
-                    status[i] = Status.Empty;
-                }
-            }
-        hash.remove(p);
+while (status[readPos] == Status.USED){
+    status[readPos] = Status.Empty;
 
-    }
+        System.out.println(p.pointsAt());
+                pointerList.remove(p);
+                hash.remove(p);
+            }
 
     /**
      * Prints a simple model of the memory. Example:
@@ -81,10 +82,7 @@ public class FirstFit extends Memory {
 
             if (status[i] == Status.USED) {
                 System.out.println("----- Used Memory:" + i);
-
-
             }
-
             if (status[i] == Status.Empty) {
                 System.out.println("+++++ Free Memory:" + i);
             }
