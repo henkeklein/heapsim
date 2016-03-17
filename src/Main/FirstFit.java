@@ -1,6 +1,5 @@
 package Main;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.HashMap;
 
 /**
@@ -24,7 +23,7 @@ public class FirstFit extends Memory {
     public FirstFit(int size) {
         super(size);
 
-        hash = new HashMap<>();
+        hash = new HashMap<Pointer, Integer>();
         status = new Status[size];
         for (int i = 0; i < status.length; i++) {
             status[i] = Status.Empty;
@@ -63,10 +62,18 @@ public class FirstFit extends Memory {
      */
     @Override
     public void release(Pointer p) {
+        int i = hash.get(p);
+            if (status[i] == Status.New){
+                p.pointAt(i);
+                status[i] = Status.Empty;
+                hash.remove(p);
+                System.out.println(i + "WIHO");
 
-      System.out.println(p.pointsAt()+"PPPPPPPPPP");
-        System.out.println(hash.get(p)+"QQQQQQQQ");
-        hash.remove(p);
+        }
+
+               System.out.println(p.pointsAt()+"PPPPPPPPPP");
+               System.out.println(hash.get(p)+"QQQQQQQQ");
+
     }
 
     /**
@@ -79,18 +86,16 @@ public class FirstFit extends Memory {
      */
     @Override
     public void printLayout() {
-            for (int i = 0; i < cells.length; i++) {
+            for (int i = 0; i < status.length; i++) {
 
-
-                p.read(i);
                 if (status[i] == Status.New) {
-                    System.out.println("Used Memory:" + i);
+                    System.out.println("----- Used Memory:" + i);
 
 
                 }
-                if (status[i] == Status.Empty) {
-                    System.out.println("Free Memory:" + i);
 
+                if (status[i] == Status.Empty){
+                    System.out.println("+++++ Free Memory:" + i);
                 }
 
         }
