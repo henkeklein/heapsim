@@ -1,6 +1,7 @@
 package Main;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+import java.util.LinkedList;
 
 /**
  * This memory model allocates memory cells based on the first-fit method.
@@ -9,10 +10,8 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
  * @since 1.0
  */
 public class FirstFit extends Memory {
-    private Status[] status;
-    private int readPos;
-    private Pointer p;
-    private int count;
+    private LinkedList<Pointer> free = new LinkedList<>();
+    private Pointer pointer;
 
     /**
      * Initializes an instance of a first fit-based memory.
@@ -21,13 +20,7 @@ public class FirstFit extends Memory {
      */
     public FirstFit(int size) {
         super(size);
-        p = new Pointer(this);
-        status = new Status[size];
-
-
-        for (int i = 0; i < status.length; i++) {
-            status[i] = Status.Empty;
-        }
+        free = new LinkedList<Pointer>();
     }
 
     /**
@@ -38,16 +31,29 @@ public class FirstFit extends Memory {
      */
     @Override
     public Pointer alloc(int size) {
-        count+=size;
-            for(int i=0; i<=count; i++){
-            if ((status[i] == Status.Empty)) {
-                p.pointAt(i);
-                status[p.pointsAt()] = Status.New;
-            }
-                }
+        int counter = 0;
 
-    return p;
-}
+        for (Pointer p : free) {
+            if ((p.pointsAt() - counter) > size) {
+                pointer = new Pointer(this);
+                pointer.pointAt(counter);
+                free.add(pointer);
+                return pointer;
+            }
+            counter = p.pointsAt();
+
+        }
+        if (cells.length - counter + 1 > size) {
+            pointer = new Pointer(this);
+            pointer.pointAt(counter);
+            free.add(pointer);
+            return pointer;
+
+
+        }
+
+        return null;
+    }
 
     /**
      * Releases a number of data cells
@@ -56,24 +62,13 @@ public class FirstFit extends Memory {
      */
     @Override
     public void release(Pointer p) {
-        int lenght = p.pointsAt();
-        int arr[];
 
-        while (status[readPos] == Status.New) {
-            status[readPos] = Status.Empty;
-            readPos++;
-            arr = p.read(readPos);
-
-            for (int i : arr) {
-                System.out.println(i + " ARR");
-            }
-        }
 
     }
 
     /**
      * Prints a simple model of the memory. Example:
-     *
+     * <p>
      * |    0 -  110 | Allocated
      * |  111 -  150 | Free
      * |  151 -  999 | Allocated
@@ -81,18 +76,19 @@ public class FirstFit extends Memory {
      */
     @Override
     public void printLayout() {
-
-       for(int i =0; i < cells.length; i++){
-
-           p.read(i);
-        if(status[i]==Status.New){
-
-           }
-           if(status[i]==Status.Empty){
+        System.out.println("------------------------------------");
 
 
-           }
-
-       }
+        int counter = 0;
+        for (Pointer p : free) {
+            if (counter < p.pointsAt()) {
+                System.out.println("" + counter + " - " + (p.pointsAt() - 1) + " Free");
+            }
+            System.out.println("" + p.pointsAt() + " - " + (p.pointsAt() + " Allocated  (pointerSize is " + ")"));
+            counter = p.pointsAt();
+        }
+        if (counter < cells.length) {
+            System.out.println("" + counter + " - " + cells.length + " Free");
+        }
     }
 }
