@@ -21,8 +21,6 @@ public class FirstFit extends Memory {
         super(size);
         p = new Pointer(this);
         status = new Status[size];
-
-
         for (int i = 0; i < status.length; i++) {
             status[i] = Status.Empty;
         }
@@ -37,15 +35,15 @@ public class FirstFit extends Memory {
     @Override
     public Pointer alloc(int size) {
         count+=size;
-            for(int i=0; i<=count; i++){
+        for(int i=0; i<=count; i++) {
             if ((status[i] == Status.Empty)) {
                 p.pointAt(i);
                 status[p.pointsAt()] = Status.New;
             }
-                }
+        }
 
-    return p;
-}
+        return p;
+    }
 
     /**
      * Releases a number of data cells
@@ -54,24 +52,13 @@ public class FirstFit extends Memory {
      */
     @Override
     public void release(Pointer p) {
-        int lenght = p.pointsAt();
-        int arr[];
 
-        while (status[readPos] == Status.New) {
-            status[readPos] = Status.Empty;
-            readPos++;
-            arr = p.read(readPos);
-
-            for (int i : arr) {
-                System.out.println(i + " ARR");
-            }
-        }
 
     }
 
     /**
      * Prints a simple model of the memory. Example:
-     *
+     * <p>
      * |    0 -  110 | Allocated
      * |  111 -  150 | Free
      * |  151 -  999 | Allocated
@@ -79,18 +66,19 @@ public class FirstFit extends Memory {
      */
     @Override
     public void printLayout() {
+            for (int i = 0; i < cells.length; i++) {
 
-       for(int i =0; i < cells.length; i++){
+                p.read(i);
+                if (status[i] == Status.New) {
+                    System.out.println("Used Memory:" + i);
 
-           p.read(i);
-        if(status[i]==Status.New){
-    System.out.println("Alloc" + i);
-           }
-           if(status[i]==Status.Empty){
-                System.out.println("Free" + i);
+                }
+                if (status[i] == Status.Empty) {
+                    System.out.println("Free Memory:" + i);
 
-           }
+                }
 
-       }
+        }
     }
 }
+
