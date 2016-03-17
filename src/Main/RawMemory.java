@@ -52,7 +52,6 @@ class RawMemory {
                 data[i] = cells[address + i];
             }
         } catch (ArrayIndexOutOfBoundsException e) {}
-toString();
         return data;
     }
 
@@ -65,7 +64,6 @@ toString();
             sb.append(data + "\n");
            count++;
         }
-        System.out.println(count);
         return sb.toString();
     }
 }

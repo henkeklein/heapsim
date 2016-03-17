@@ -1,7 +1,5 @@
 package Main;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
-
 /**
  * This memory model allocates memory cells based on the first-fit method.
  *
@@ -86,10 +84,10 @@ public class FirstFit extends Memory {
 
            p.read(i);
         if(status[i]==Status.New){
-
+    System.out.println("Alloc" + i);
            }
            if(status[i]==Status.Empty){
-
+                System.out.println("Free" + i);
 
            }
 
