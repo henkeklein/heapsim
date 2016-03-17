@@ -10,10 +10,9 @@ import java.util.HashMap;
  */
 public class FirstFit extends Memory {
     private Status[] status;
-    private HashMap <Pointer,Integer>hash;
+    private HashMap<Pointer,Integer> hash;
     private Pointer p;
-    private int count=1;
-    int counter=1;
+    private int count = 1;
 
     /**
      * Initializes an instance of a first fit-based memory.
@@ -23,7 +22,7 @@ public class FirstFit extends Memory {
     public FirstFit(int size) {
         super(size);
 
-        hash = new HashMap<Pointer, Integer>();
+        hash = new HashMap<>();
         status = new Status[size];
         for (int i = 0; i < status.length; i++) {
             status[i] = Status.Empty;
@@ -38,20 +37,17 @@ public class FirstFit extends Memory {
      */
     @Override
     public Pointer alloc(int size) {
-
-
-        count+=size;
-        if(size< count){
+        count += size;
+        if (size < count) {
             p = new Pointer(this);
-        for(int i=0; i<=count; i++) {
-            if ((status[i] == Status.Empty)) {
-                p.pointAt(i);
-                status[p.pointsAt()] = Status.New;
-                hash.put(p, counter);
+            for (int i = 0; i <= count; i++) {
+                if ((status[i] == Status.Empty)) {
+                    p.pointAt(i);
+                    status[p.pointsAt()] = Status.USED;
+                    hash.put(p,size );
+                }
             }
         }
-        }
-        counter++;
         return p;
     }
 
@@ -62,17 +58,12 @@ public class FirstFit extends Memory {
      */
     @Override
     public void release(Pointer p) {
-        int i = hash.get(p);
-            if (status[i] == Status.New){
-                p.pointAt(i);
-                status[i] = Status.Empty;
-                hash.remove(p);
-                System.out.println(i + "WIHO");
-
-        }
-
-               System.out.println(p.pointsAt()+"PPPPPPPPPP");
-               System.out.println(hash.get(p)+"QQQQQQQQ");
+        for (int i = 0; i <= hash.get(p); i++) {
+            if (status[i] == Status.USED) {
+                    status[i] = Status.Empty;
+                }
+            }
+        hash.remove(p);
 
     }
 
@@ -86,17 +77,17 @@ public class FirstFit extends Memory {
      */
     @Override
     public void printLayout() {
-            for (int i = 0; i < status.length; i++) {
+        for (int i = 0; i < status.length; i++) {
 
-                if (status[i] == Status.New) {
-                    System.out.println("----- Used Memory:" + i);
+            if (status[i] == Status.USED) {
+                System.out.println("----- Used Memory:" + i);
 
 
-                }
+            }
 
-                if (status[i] == Status.Empty){
-                    System.out.println("+++++ Free Memory:" + i);
-                }
+            if (status[i] == Status.Empty) {
+                System.out.println("+++++ Free Memory:" + i);
+            }
 
         }
     }

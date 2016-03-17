@@ -5,5 +5,5 @@ package Main;
  */
 public enum Status {
     Empty,
-    New
+    USED
 }
