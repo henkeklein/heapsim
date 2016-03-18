@@ -1,5 +1,9 @@
 package Main;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
 /**
  * This memory model allocates memory cells based on the best-fit method.
  *
@@ -7,6 +11,12 @@ package Main;
  * @since 1.0
  */
 public class BestFit extends Memory {
+    private Status[] status;
+    private Map<Pointer, Integer> hash;
+    private LinkedList<Pointer> pointerList;
+    private Pointer p;
+    private int writePos;
+    private int readPos;
 
     /**
      * Initializes an instance of a best fit-based memory.
@@ -15,7 +25,13 @@ public class BestFit extends Memory {
      */
     public BestFit(int size) {
         super(size);
-        // TODO Implement this!
+        pointerList = new LinkedList<Pointer>();
+        hash = new HashMap<>();
+        status = new Status[size];
+        for (int i = 0; i < status.length; i++) {
+            status[i] = Status.Empty;
+        }
+
     }
 
     /**
@@ -26,8 +42,40 @@ public class BestFit extends Memory {
      */
     @Override
     public Pointer alloc(int size) {
-        // TODO Implement this!
-        return null;
+        boolean h = true;
+        int i = 0;
+        p = new Pointer(this);
+
+        while (status[writePos] == Status.USED && h) {
+            writePos++;
+            if (status[writePos] == Status.Empty) {
+                if (status[writePos + size] == Status.Empty) {
+                    int e = 0;
+
+                    while (status[writePos] == Status.Empty && e <= size) {
+                        writePos++;
+                        e++;
+                        if (status[writePos] == Status.USED) {
+                            e = 0;
+                        }
+                        if (e == size) {
+                            h = false;
+                        }
+                    }
+                    writePos -= e;
+                }
+            }
+        }
+        while ((status[writePos] == Status.Empty) && i < size) {
+            p.pointAt(writePos);
+            status[writePos] = Status.USED;
+            writePos++;
+            i++;
+        }
+        pointerList.add(p);
+        hash.put(p, size);
+        writePos = 0;
+        return p;
     }
 
     /**
@@ -36,8 +84,22 @@ public class BestFit extends Memory {
      * @param p The pointer to release.
      */
     @Override
-    public void release(Pointer p) {
-        // TODO Implement this!
+    public void release(Pointer p1) {
+        int remover = 0;
+        readPos = (p1.pointsAt());
+
+        try {
+            while (status[readPos] == Status.USED && hash.get(p1) - remover > 0) {
+                status[readPos] = Status.Empty;
+                readPos--;
+                remover++;
+            }
+            pointerList.remove(p);
+            hash.remove(p);
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+        }
     }
 
     /**
@@ -50,6 +112,15 @@ public class BestFit extends Memory {
      */
     @Override
     public void printLayout() {
-        // TODO Implement this!
+        for (int i = 0; i < status.length; i++) {
+
+            if (status[i] == Status.USED) {
+                System.out.println("----- Used Memory:" + i);
+            }
+            if (status[i] == Status.Empty) {
+                System.out.println("+++++ Free Memory:" + i);
+            }
+
+        }
     }
 }

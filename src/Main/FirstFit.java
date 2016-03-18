@@ -25,14 +25,14 @@ public class FirstFit extends Memory {
      */
     public FirstFit(int size) {
         super(size);
-        pointerList = new LinkedList<Pointer>();
-        hash = new HashMap<>();
-        status = new Status[size];
-        for (int i = 0; i < status.length; i++) {
-            status[i] = Status.Empty;
-        }
-
+    pointerList = new LinkedList<Pointer>();
+    hash = new HashMap<>();
+    status = new Status[size];
+    for (int i = 0; i < status.length; i++) {
+        status[i] = Status.Empty;
     }
+
+}
 
     /**
      * Allocates a number of memory cells.
@@ -96,7 +96,7 @@ public class FirstFit extends Memory {
             }
             pointerList.remove(p);
             hash.remove(p);
-            sortPointers();
+
         } catch (ArrayIndexOutOfBoundsException e) {
 
         }
@@ -123,11 +123,7 @@ public class FirstFit extends Memory {
 
         }
     }
-
-    private void sortPointers() {
-        pointerList.sort((p1, p2) -> {
-            return p1.pointsAt() - p2.pointsAt();
-        });
-    }
 }
+
+
 
