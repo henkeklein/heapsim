@@ -43,14 +43,11 @@ public class FirstFit extends Memory {
     @Override
     public Pointer alloc(int size) {
         boolean h = true;
-        int i = 0;
+        int e = 0;
         p = new Pointer(this);
-
         while (status[writePos] == Status.USED && h) {
             writePos++;
-            if (status[writePos] == Status.Empty) {
-                if (status[writePos + size] == Status.Empty) {
-                    int e = 0;
+            if (status[writePos] == Status.Empty && status[writePos + size] == Status.Empty) {
 
                     while (status[writePos] == Status.Empty && e <= size) {
                         writePos++;
@@ -65,7 +62,7 @@ public class FirstFit extends Memory {
                     writePos -= e;
                 }
             }
-        }
+        int i = 0;
         while ((status[writePos] == Status.Empty) && i < size) {
             p.pointAt(writePos);
             status[writePos] = Status.USED;
