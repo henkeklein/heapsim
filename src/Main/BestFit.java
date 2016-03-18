@@ -51,7 +51,7 @@ public class BestFit extends Memory {
         boolean h = true;
         int e = 0;
         p = new Pointer(this);
-        checkFreeMemory();
+        checkFreeMemory(size);
         while (status[writePos] == Status.USED && h) {
             writePos++;
             if (status[writePos] == Status.Empty && status[writePos + size] == Status.Empty) {
@@ -129,27 +129,23 @@ public class BestFit extends Memory {
     }
     public void checkFreeMemory(int size) {
         int count = 0;
-        int used = 0;
-        for (int i = 0; i < status.length-1; i++) {
 
+        for (int i = 0; i < status.length-1; i++) {
                 if (status[i] == Status.Empty) {
                     if(count==0){
-                        used=i;
-                        list1.add(used);
-                        System.out.println(used+ "USED");
+                        list1.add(i);
+                        System.out.println(i+ " STARTPOS");
                     }
-                    count++;
-
-                        if (status[i + 1] == Status.USED) {
-                            list.add(count);
-                            System.out.println(count +" END");
+                        if (status[i+1] == Status.USED || size>=count) {
+                            if(size==count){
+                                list.add(i);
+                                System.out.println(i +" ENDPOS");
+                            }
                         }
-list.remove() - list1.remove()   <=size                 }
-                }
-
-
-
+                    count++;
+                        }
+                    }
+             }
         }
 
-    }
 
