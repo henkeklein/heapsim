@@ -1,5 +1,6 @@
 package Main;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -14,6 +15,9 @@ public class BestFit extends Memory {
     private Status[] status;
     private Map<Pointer, Integer> hash;
     private LinkedList<Pointer> pointerList;
+
+    private ArrayList<Integer> list;
+    private ArrayList<Integer> list1;
     private Pointer p;
     private int writePos;
     private int readPos;
@@ -27,6 +31,8 @@ public class BestFit extends Memory {
         super(size);
         pointerList = new LinkedList<Pointer>();
         hash = new HashMap<>();
+        list = new ArrayList<Integer>();
+        list1 = new ArrayList<Integer>();
         status = new Status[size];
         for (int i = 0; i < status.length; i++) {
             status[i] = Status.Empty;
@@ -43,29 +49,27 @@ public class BestFit extends Memory {
     @Override
     public Pointer alloc(int size) {
         boolean h = true;
-        int i = 0;
+        int e = 0;
         p = new Pointer(this);
-
+        checkFreeMemory();
         while (status[writePos] == Status.USED && h) {
             writePos++;
-            if (status[writePos] == Status.Empty) {
-                if (status[writePos + size] == Status.Empty) {
-                    int e = 0;
+            if (status[writePos] == Status.Empty && status[writePos + size] == Status.Empty) {
 
-                    while (status[writePos] == Status.Empty && e <= size) {
-                        writePos++;
-                        e++;
-                        if (status[writePos] == Status.USED) {
-                            e = 0;
-                        }
-                        if (e == size) {
-                            h = false;
-                        }
+                while (status[writePos] == Status.Empty && e <= size) {
+                    writePos++;
+                    e++;
+                    if (status[writePos] == Status.USED) {
+                        e = 0;
                     }
-                    writePos -= e;
+                    if (e == size) {
+                        h = false;
+                    }
                 }
+                writePos -= e;
             }
         }
+        int i = 0;
         while ((status[writePos] == Status.Empty) && i < size) {
             p.pointAt(writePos);
             status[writePos] = Status.USED;
@@ -118,9 +122,34 @@ public class BestFit extends Memory {
                 System.out.println("----- Used Memory:" + i);
             }
             if (status[i] == Status.Empty) {
-                System.out.println("+++++ Free Memory:" + i);
+                System.out.println("+++++ Empty Memory:" + i);
             }
 
         }
     }
-}
+    public void checkFreeMemory(int size) {
+        int count = 0;
+        int used = 0;
+        for (int i = 0; i < status.length-1; i++) {
+
+                if (status[i] == Status.Empty) {
+                    if(count==0){
+                        used=i;
+                        list1.add(used);
+                        System.out.println(used+ "USED");
+                    }
+                    count++;
+
+                        if (status[i + 1] == Status.USED) {
+                            list.add(count);
+                            System.out.println(count +" END");
+                        }
+list.remove() - list1.remove()   <=size                 }
+                }
+
+
+
+        }
+
+    }
+
