@@ -48,32 +48,15 @@ public class BestFit extends Memory {
      */
     @Override
     public Pointer alloc(int size) {
-        boolean h = true;
-        int e = 0;
-        p = new Pointer(this);
-        checkFreeMemory(size);
-        while (status[writePos] == Status.USED && h) {
-            writePos++;
-            if (status[writePos] == Status.Empty && status[writePos + size] == Status.Empty) {
-
-                while (status[writePos] == Status.Empty && e <= size) {
-                    writePos++;
-                    e++;
-                    if (status[writePos] == Status.USED) {
-                        e = 0;
-                    }
-                    if (e == size) {
-                        h = false;
-                    }
-                }
-                writePos -= e;
-            }
-        }
         int i = 0;
-        while ((status[writePos] == Status.Empty) && i < size) {
-            p.pointAt(writePos);
-            status[writePos] = Status.USED;
-            writePos++;
+        p = new Pointer(this);
+        int bestAddress = checkFreeMemory(size);
+
+
+        while ((status[bestAddress] == Status.Empty) && i < size) {
+            p.pointAt(bestAddress);
+            status[bestAddress] = Status.USED;
+            bestAddress++;
             i++;
         }
         pointerList.add(p);
@@ -108,7 +91,7 @@ public class BestFit extends Memory {
 
     /**
      * Prints a simple model of the memory. Example:
-     *
+     * <p>
      * |    0 -  110 | Allocated
      * |  111 -  150 | Free
      * |  151 -  999 | Allocated
@@ -127,25 +110,41 @@ public class BestFit extends Memory {
 
         }
     }
-    public void checkFreeMemory(int size) {
-        int count = 0;
 
-        for (int i = 0; i < status.length-1; i++) {
-                if (status[i] == Status.Empty) {
-                    if(count==0){
-                        list1.add(i);
-                        System.out.println(i+ " STARTPOS");
-                    }
-                        if (status[i+1] == Status.USED || size>=count) {
-                            if(size==count){
-                                list.add(i);
-                                System.out.println(i +" ENDPOS");
-                            }
-                        }
-                    count++;
-                        }
-                    }
-             }
+    public int checkFreeMemory(int size) {
+        int address = -1;
+        int minSpace = Integer.MAX_VALUE;
+        int count = 0;
+        int first = 0;
+        int last = 0;
+        Status s = status[0];
+
+
+        for (int i = 1; i < status.length; i++) {
+            if (status[i].equals(s)) {
+                last++;
+            } else {
+            if (status[i] == Status.Empty && ((last - first + 1) >= size)) {
+                if ((last - first + 1) - size < minSpace) {
+                    address = first;
+                    minSpace = (last - first + 1) - size;
+                }
+            }
+            last++;
+            s = status[i];
+            first = last;
         }
+    }
+
+        if (s.equals(Status.Empty) && ((last - first + 1) >= size)) {
+            if ((last - first + 1) - size < minSpace) {
+                address = first;
+            }
+        }
+
+        return address;
+
+    }
+}
 
 
