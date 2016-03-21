@@ -60,7 +60,7 @@ public class BestFit extends Memory {
         p = new Pointer(this);
         int bestAddress = checkFreeMemory(size);
 
-        while (i < size) {
+        while (i < size && status[bestAddress] == Status.Empty) {
             p.pointAt(bestAddress);
             status[bestAddress] = Status.USED;
             bestAddress++;
@@ -128,32 +128,25 @@ public class BestFit extends Memory {
                 if (count == 0) {
                     start = i;
                     end = i;
+                    count++;
                 }
-                count++;
+                end++;
 
-                if (end - start >= size) {
+                if (end - start == size) {
                     count = 0;
                     list.put(start, end - start);
                 }
-            } else if (status[i] == Status.USED) {
-                if (i > 1) {
-                    if (status[i - 1] == Status.Empty) {
-                        if (end - start >= size) {
-                            list.put(start, end - start);
-                            count = 0;
-
-                        }
-                    }
-                }
-                if (i < status.length - 1) {
-                    if (status[i + 1] == Status.Empty) {
-                        if (end - start >= size) {
-                            count = 0;
-                        }
-                    }
-                }
             }
-            end++;
+            if (status[i] == Status.USED) {
+                if (i < status.length) {
+                    if (status[i + 1] == Status.Empty) {
+                        count = 0;
+
+                    }
+                }
+
+            }
+
         }
         Map<Integer, Integer> map = new TreeMap<>(sortByValues(list));
         Set set2 = map.entrySet();
