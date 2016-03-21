@@ -49,7 +49,7 @@ public class FirstFit extends Memory {
             writePos++;
             if (status[writePos] == Status.Empty && status[writePos + size] == Status.Empty) {
 
-                    while (status[writePos] == Status.Empty && e <= size) {
+                while (status[writePos] == Status.Empty && e < size) {
                         writePos++;
                         e++;
                         if (status[writePos] == Status.USED) {

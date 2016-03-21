@@ -1,9 +1,6 @@
 package Main;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This memory model allocates memory cells based on the best-fit method.
@@ -15,11 +12,7 @@ public class BestFit extends Memory {
     private Status[] status;
     private Map<Pointer, Integer> hash;
     private LinkedList<Pointer> pointerList;
-
-    private ArrayList<Integer> list;
-    private ArrayList<Integer> list1;
     private Pointer p;
-    private int writePos;
     private int readPos;
 
     /**
@@ -31,13 +24,28 @@ public class BestFit extends Memory {
         super(size);
         pointerList = new LinkedList<Pointer>();
         hash = new HashMap<>();
-        list = new ArrayList<Integer>();
-        list1 = new ArrayList<Integer>();
         status = new Status[size];
         for (int i = 0; i < status.length; i++) {
             status[i] = Status.Empty;
         }
 
+    }
+
+    private static HashMap sortByValues(HashMap map) {
+        List list = new LinkedList(map.entrySet());
+
+        Collections.sort(list, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return ((Comparable) ((Map.Entry) (o1)).getValue())
+                        .compareTo(((Map.Entry) (o2)).getValue());
+            }
+        });
+        HashMap sortedHashMap = new LinkedHashMap();
+        for (Iterator it = list.iterator(); it.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) it.next();
+            sortedHashMap.put(entry.getKey(), entry.getValue());
+        }
+        return sortedHashMap;
     }
 
     /**
@@ -52,8 +60,7 @@ public class BestFit extends Memory {
         p = new Pointer(this);
         int bestAddress = checkFreeMemory(size);
 
-
-        while ((status[bestAddress] == Status.Empty) && i < size) {
+        while (i < size) {
             p.pointAt(bestAddress);
             status[bestAddress] = Status.USED;
             bestAddress++;
@@ -61,7 +68,6 @@ public class BestFit extends Memory {
         }
         pointerList.add(p);
         hash.put(p, size);
-        writePos = 0;
         return p;
     }
 
@@ -112,39 +118,52 @@ public class BestFit extends Memory {
     }
 
     public int checkFreeMemory(int size) {
-        int address = -1;
-        int minSpace = Integer.MAX_VALUE;
+        HashMap<Integer, Integer> list = new HashMap<>();
+        int start = 0;
+        int end = 0;
         int count = 0;
-        int first = 0;
-        int last = 0;
-        Status s = status[0];
 
+        for (int i = 0; i < status.length; i++) {
+            if (status[i] == Status.Empty) {
+                if (count == 0) {
+                    start = i;
+                    end = i;
+                }
+                count++;
 
-        for (int i = 1; i < status.length; i++) {
-            if (status[i].equals(s)) {
-                last++;
-            } else {
-            if (status[i] == Status.Empty && ((last - first + 1) >= size)) {
-                if ((last - first + 1) - size < minSpace) {
-                    address = first;
-                    minSpace = (last - first + 1) - size;
+                if (end - start >= size) {
+                    count = 0;
+                    list.put(start, end - start);
+                }
+            } else if (status[i] == Status.USED) {
+                if (i > 1) {
+                    if (status[i - 1] == Status.Empty) {
+                        if (end - start >= size) {
+                            list.put(start, end - start);
+                            count = 0;
+
+                        }
+                    }
+                }
+                if (i < status.length - 1) {
+                    if (status[i + 1] == Status.Empty) {
+                        if (end - start >= size) {
+                            count = 0;
+                        }
+                    }
                 }
             }
-            last++;
-            s = status[i];
-            first = last;
+            end++;
         }
-    }
-
-        if (s.equals(Status.Empty) && ((last - first + 1) >= size)) {
-            if ((last - first + 1) - size < minSpace) {
-                address = first;
-            }
+        Map<Integer, Integer> map = new TreeMap<>(sortByValues(list));
+        Set set2 = map.entrySet();
+        Iterator iterator2 = set2.iterator();
+        if (iterator2.hasNext()) {
+            Map.Entry me2 = (Map.Entry) iterator2.next();
+            start = (int) me2.getKey();
         }
 
-        return address;
+        return start;
 
     }
 }
-
-
