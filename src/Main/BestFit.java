@@ -31,6 +31,12 @@ public class BestFit extends Memory {
 
     }
 
+    /**
+     * Sort the value end minus start >= size.
+     * The smallest value is placed first in the list (easy to get the smallest value).
+     * @param map
+     * @return a sorted hash map.
+     */
     private static HashMap sortByValues(HashMap map) {
         List list = new LinkedList(map.entrySet());
 
@@ -50,7 +56,7 @@ public class BestFit extends Memory {
 
     /**
      * Allocates a number of memory cells.
-     *
+     * Adds the pointer in the linked list and put the pointer and size in the hash map.
      * @param size the number of cells to allocate.
      * @return The address of the first cell.
      */
@@ -73,7 +79,7 @@ public class BestFit extends Memory {
 
     /**
      * Releases a number of data cells
-     *
+     * Removes the pointer from the hash map and the linked list.
      * @param p The pointer to release.
      */
     @Override
@@ -96,12 +102,9 @@ public class BestFit extends Memory {
     }
 
     /**
-     * Prints a simple model of the memory. Example:
-     * <p>
-     * |    0 -  110 | Allocated
-     * |  111 -  150 | Free
-     * |  151 -  999 | Allocated
-     * | 1000 - 1024 | Free
+     * Prints a simple model of the memory.
+     * ----- for used memory
+     * +++++ for free memory
      */
     @Override
     public void printLayout() {
@@ -117,6 +120,11 @@ public class BestFit extends Memory {
         }
     }
 
+    /**
+     * Checks were the best possible place to allocate memory is.
+     * @param size
+     * @return the best place with least rest.
+     */
     public int checkFreeMemory(int size) {
         HashMap<Integer, Integer> list = new HashMap<>();
         int start = 0;

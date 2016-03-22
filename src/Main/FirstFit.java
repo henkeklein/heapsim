@@ -25,7 +25,7 @@ public class FirstFit extends Memory {
      */
     public FirstFit(int size) {
         super(size);
-    pointerList = new LinkedList<Pointer>();
+    pointerList = new LinkedList<>();
     hash = new HashMap<>();
     status = new Status[size];
     for (int i = 0; i < status.length; i++) {
@@ -36,7 +36,7 @@ public class FirstFit extends Memory {
 
     /**
      * Allocates a number of memory cells.
-     *
+     * Adds the pointer in the linked list and put the pointer and size in the hash map.
      * @param size the number of cells to allocate.
      * @return The address of the first cell.
      */
@@ -77,7 +77,7 @@ public class FirstFit extends Memory {
 
     /**
      * Releases a number of data cells
-     *
+     * Removes the pointer from the hash map and the linked list.
      * @param p The pointer to release.
      */
     @Override
@@ -100,12 +100,9 @@ public class FirstFit extends Memory {
     }
 
     /**
-     * Prints a simple model of the memory. Example:
-     * <p>
-     * |    0 -  110 | Allocated
-     * |  111 -  150 | Free
-     * |  151 -  999 | Allocated
-     * | 1000 - 1024 | Free
+     * Prints a simple model of the memory.
+     * ----- for used memory
+     * +++++ for free memory
      */
     @Override
     public void printLayout() {
